@@ -1,12 +1,355 @@
-<!DOCTYPE html>
-<html>
+
+<!doctype html>
+<html lang="th">
 <head>
-<title>Page Title</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ดูดวงความรัก (ลับเฉพาะคนพิเศษ)</title>
+  <style>
+    :root{
+      --bg1:#1a0b2e;
+      --bg2:#0b1633;
+      --card:rgba(255,255,255,.12);
+      --card2:rgba(255,255,255,.08);
+      --text:#fff;
+      --muted:rgba(255,255,255,.72);
+      --accent:#ff4d6d;
+      --accent2:#ffd1dc;
+      --shadow:0 18px 50px rgba(0,0,0,.35);
+      --radius:22px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family: ui-sans-serif,system-ui,-apple-system,"Segoe UI","Noto Sans Thai",sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 600px at 20% 15%, rgba(255,77,109,.35), transparent 60%),
+        radial-gradient(900px 500px at 85% 80%, rgba(255,209,220,.18), transparent 55%),
+        linear-gradient(160deg, var(--bg1), var(--bg2));
+      overflow:hidden;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+    }
+    .wrap{width:min(520px, 100%); position:relative; z-index:5;}
+    .card{
+      background: linear-gradient(180deg, var(--card), var(--card2));
+      border:1px solid rgba(255,255,255,.14);
+      border-radius:var(--radius);
+      box-shadow: var(--shadow);
+      padding:26px;
+      backdrop-filter: blur(12px);
+    }
+    h1,h2,p{margin:0}
+    .title{
+      display:flex; align-items:center; justify-content:center; gap:10px;
+      font-weight:950; letter-spacing:.2px;
+      font-size: clamp(22px, 4.2vw, 30px);
+      margin-bottom:10px;
+    }
+    .sub{
+      color:var(--muted);
+      font-size: 15px;
+      line-height:1.5;
+      text-align:center;
+      margin-bottom:18px;
+    }
+    .field{
+      margin-top:14px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .label{
+      font-weight:800;
+      color: rgba(255,255,255,.88);
+      font-size:14px;
+      text-align:left;
+    }
+    input{
+      width:100%;
+      padding:14px 14px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(0,0,0,.18);
+      color:#fff;
+      outline:none;
+      font-size:18px;
+      text-align:center;
+    }
+    input::placeholder{color:rgba(255,255,255,.55)}
+    .btn{
+      margin-top:14px;
+      width:100%;
+      border:0;
+      border-radius:14px;
+      padding:14px 16px;
+      cursor:pointer;
+      font-size:18px;
+      font-weight:950;
+      color:#270915;
+      background: linear-gradient(135deg, var(--accent2), #fff);
+      box-shadow: 0 12px 24px rgba(255,77,109,.22);
+      transition: transform .15s ease;
+    }
+    .btn:hover{transform: translateY(-1px) scale(1.01);}
+    .hint{
+      margin-top:10px;
+      min-height:20px;
+      text-align:center;
+      font-weight:800;
+      color:#ffd1dc;
+      opacity:.95;
+    }
+    .hidden{display:none !important;}
+
+    /* page2 */
+    .story{
+      text-align:center;
+    }
+    .line1{
+      font-size: clamp(18px, 3.8vw, 22px);
+      font-weight:950;
+      margin-top:8px;
+    }
+    .line2{
+      margin-top:10px;
+      color:rgba(255,255,255,.82);
+      line-height:1.6;
+      font-size:16px;
+    }
+    .flowerBox{
+      margin:18px auto 10px;
+      width:min(360px, 100%);
+      border-radius:18px;
+      padding:14px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.18);
+    }
+    .giftText{
+      margin-top:10px;
+      font-size: clamp(20px, 4.2vw, 26px);
+      font-weight:1000;
+      color:#fff;
+    }
+    .small{
+      margin-top:8px;
+      color:rgba(255,255,255,.75);
+      font-size:14px;
+    }
+
+    /* floating hearts (prank vibe) */
+    .heart{
+      position:fixed;
+      left:0; top:0;
+      transform: translate(-50%,-50%);
+      pointer-events:none;
+      opacity:.85;
+      filter: drop-shadow(0 8px 18px rgba(0,0,0,.25));
+      animation: floatUp linear forwards;
+      z-index:1;
+      font-size:18px;
+    }
+    @keyframes floatUp{
+      from { transform: translate(var(--x), 110vh) scale(.9); opacity:.9; }
+      to   { transform: translate(var(--x), -12vh) scale(1.35); opacity:0; }
+    }
+
+    /* bouquet svg sizing */
+    svg{width:100%; height:auto; display:block;}
+  </style>
 </head>
+
 <body>
+  <div class="wrap">
+    <!-- PAGE 1: "ดูดวง" login -->
+    <div class="card" id="page1">
+      <div class="title">🔮 ดูดวงความรัก</div>
+      <div class="sub">โปรดใส่ชื่อของคุณเพื่อเริ่มทำนาย (ลับเฉพาะคนพิเศษ)</div>
 
-<h1>My First Heading</h1>
-<p>My first paragraph.</p>
+      <div class="field">
+        <div class="label">ชื่อ - นามสกุล</div>
+        <input id="nameInput" placeholder="พิมพ์ชื่อของคุณที่นี่" autocomplete="off" />
+        <button class="btn" id="btnCheck">เริ่มทำนาย</button>
+        <div class="hint" id="msg"></div>
+      </div>
+    </div>
 
+    <!-- PAGE 2: prank valentine story -->
+    <div class="card hidden" id="page2">
+      <div class="story">
+        <div class="title">💘 ผลคำทำนายวันนี้</div>
+        <div class="line1">เมื่อวานวันวาเลนไทน์ ผมไม่ได้ซื้อดอกกุหลาบให้</div>
+        <div class="line2">แต่…เดี๋ยวก่อนนะ มีอะไรจะให้ 😌</div>
+
+        <div class="flowerBox" id="flowerBox" aria-label="bouquet">
+          <!-- Simple cute bouquet SVG (no external image needed) -->
+          <svg viewBox="0 0 800 520" role="img">
+            <defs>
+              <linearGradient id="g1" x1="0" x2="1">
+                <stop offset="0" stop-color="#ffd1dc" stop-opacity="0.95"/>
+                <stop offset="1" stop-color="#ffffff" stop-opacity="0.95"/>
+              </linearGradient>
+              <linearGradient id="g2" x1="0" x2="1">
+                <stop offset="0" stop-color="#9be3d9" stop-opacity="0.9"/>
+                <stop offset="1" stop-color="#b9f0d4" stop-opacity="0.9"/>
+              </linearGradient>
+              <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="8" result="blur"/>
+                <feMerge>
+                  <feMergeNode in="blur"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
+            </defs>
+
+            <!-- background blob -->
+            <path d="M110,340 C60,250 120,120 270,120 C360,70 520,60 610,140 C740,170 780,290 700,380 C620,470 410,470 300,440 C210,430 150,410 110,340Z"
+                  fill="rgba(255,255,255,0.08)"/>
+
+            <!-- leaves -->
+            <path d="M260,320 C180,250 190,170 260,150 C330,170 330,260 260,320Z" fill="url(#g2)" opacity=".9"/>
+            <path d="M540,330 C610,250 610,170 540,150 C470,170 470,260 540,330Z" fill="url(#g2)" opacity=".9"/>
+
+            <!-- stems -->
+            <path d="M395,410 C330,330 300,270 280,230" stroke="#7dd3b0" stroke-width="14" stroke-linecap="round" opacity=".85"/>
+            <path d="M405,410 C470,330 500,270 520,230" stroke="#7dd3b0" stroke-width="14" stroke-linecap="round" opacity=".85"/>
+            <path d="M400,415 C400,320 400,260 400,210" stroke="#7dd3b0" stroke-width="14" stroke-linecap="round" opacity=".85"/>
+
+            <!-- flowers -->
+            <!-- left rose -->
+            <g filter="url(#soft)" transform="translate(250,150)">
+              <circle cx="0" cy="0" r="55" fill="#ff4d6d" opacity=".95"/>
+              <circle cx="-18" cy="-8" r="38" fill="#ff758f" opacity=".9"/>
+              <circle cx="12" cy="10" r="30" fill="#ff8fa3" opacity=".88"/>
+              <circle cx="0" cy="0" r="18" fill="#ffd1dc" opacity=".95"/>
+            </g>
+            <!-- center rose -->
+            <g filter="url(#soft)" transform="translate(400,120)">
+              <circle cx="0" cy="0" r="70" fill="#ff4d6d" opacity=".95"/>
+              <circle cx="-22" cy="-10" r="48" fill="#ff758f" opacity=".9"/>
+              <circle cx="16" cy="14" r="40" fill="#ff8fa3" opacity=".88"/>
+              <circle cx="0" cy="0" r="22" fill="#fff" opacity=".95"/>
+            </g>
+            <!-- right rose -->
+            <g filter="url(#soft)" transform="translate(550,160)">
+              <circle cx="0" cy="0" r="55" fill="#ff4d6d" opacity=".95"/>
+              <circle cx="-18" cy="-8" r="38" fill="#ff758f" opacity=".9"/>
+              <circle cx="12" cy="10" r="30" fill="#ff8fa3" opacity=".88"/>
+              <circle cx="0" cy="0" r="18" fill="#ffd1dc" opacity=".95"/>
+            </g>
+
+            <!-- wrap -->
+            <path d="M260,395 C320,320 480,320 540,395 C500,460 300,460 260,395Z"
+                  fill="url(#g1)" opacity=".95"/>
+            <path d="M310,400 C360,360 440,360 490,400" stroke="rgba(255,77,109,.35)" stroke-width="6" stroke-linecap="round"/>
+
+            <!-- ribbon -->
+            <g transform="translate(400,420)">
+              <path d="M0,0 C-30,-25 -70,-20 -92,5 C-60,28 -28,24 0,0Z" fill="#ff4d6d" opacity=".95"/>
+              <path d="M0,0 C30,-25 70,-20 92,5 C60,28 28,24 0,0Z" fill="#ff4d6d" opacity=".95"/>
+              <circle cx="0" cy="0" r="14" fill="#ffd1dc" opacity=".95"/>
+            </g>
+          </svg>
+        </div>
+
+        <div class="giftText">อะ อันนี้เราให้นะ</div>
+        <div class="small">ปล. มาช้า แต่มานะ 🫣</div>
+
+        <button class="btn" id="btnReplay" style="margin-top:14px;">แกล้งใหม่อีกรอบ</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const CORRECT = "สมใจ จันทนี";
+
+    const page1 = document.getElementById("page1");
+    const page2 = document.getElementById("page2");
+    const input = document.getElementById("nameInput");
+    const msg = document.getElementById("msg");
+    const btnCheck = document.getElementById("btnCheck");
+    const btnReplay = document.getElementById("btnReplay");
+
+    function goPage2(){
+      page1.classList.add("hidden");
+      page2.classList.remove("hidden");
+      burstHearts(18);
+    }
+
+    function goPage1(){
+      page2.classList.add("hidden");
+      page1.classList.remove("hidden");
+      input.value = "";
+      msg.textContent = "";
+      input.focus();
+    }
+
+    function checkName(){
+      const v = (input.value || "").trim();
+      if(v === CORRECT){
+        msg.textContent = "";
+        goPage2();
+      }else{
+        msg.textContent = "ระบบดูดวงยังไม่ยอมทำนาย… ชื่อนี้ไม่ใช่คนพิเศษ 😌";
+        shake(page1);
+      }
+    }
+
+    function shake(el){
+      el.animate([
+        {transform:"translateX(0)"},
+        {transform:"translateX(-10px)"},
+        {transform:"translateX(10px)"},
+        {transform:"translateX(-6px)"},
+        {transform:"translateX(6px)"},
+        {transform:"translateX(0)"}
+      ], {duration:380, easing:"ease-out"});
+    }
+
+    btnCheck.addEventListener("click", checkName);
+    input.addEventListener("keydown", (e)=>{ if(e.key==="Enter") checkName(); });
+    btnReplay.addEventListener("click", ()=>{ burstHearts(22); goPage1(); });
+
+    // floating hearts background (light)
+    setInterval(()=>{
+      if(document.hidden) return;
+      spawnHeart(Math.random() < 0.7 ? "💗" : "✨");
+    }, 420);
+
+    function spawnHeart(symbol="💗"){
+      const d = document.createElement("div");
+      d.className = "heart";
+      d.textContent = symbol;
+      d.style.setProperty("--x", (Math.random()*100) + "vw");
+      const dur = 3.2 + Math.random()*3.4;
+      d.style.animationDuration = dur + "s";
+      d.style.fontSize = (16 + Math.random()*16) + "px";
+      document.body.appendChild(d);
+      setTimeout(()=>d.remove(), (dur*1000) + 200);
+    }
+
+    // burst effect when reveal
+    function burstHearts(n=16){
+      for(let i=0;i<n;i++){
+        const d = document.createElement("div");
+        d.className = "heart";
+        d.textContent = (Math.random()<0.5) ? "💖" : "💗";
+        const x = (window.innerWidth/2) + (Math.random()*240-120);
+        d.style.setProperty("--x", x + "px"); // use px for burst
+        const dur = 1.4 + Math.random()*0.8;
+        d.style.animationDuration = dur + "s";
+        d.style.fontSize = (18 + Math.random()*18) + "px";
+        document.body.appendChild(d);
+        setTimeout(()=>d.remove(), (dur*1000) + 200);
+      }
+    }
+
+    // auto focus
+    input.focus();
+  </script>
 </body>
 </html>
